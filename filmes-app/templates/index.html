@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Top Filmes - Lista Premium</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: #f0f4ff; /* fundo suave */
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 700;
+            font-size: 2.2em;
+            color: #1E3A8A;
+        }
+
+        /* Dropdown de ordenação */
+        .sort-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        select {
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 1px solid #1E3A8A;
+            font-size: 1em;
+            background: #1E3A8A;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+
+        select:hover {
+            background: #2563EB;
+        }
+
+        /* Lista de filmes */
+        .movie-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 auto;
+            max-width: 700px;
+        }
+
+        .movie-item {
+            background: #fff;
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .movie-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        /* Número dentro da bolinha azul */
+        .movie-number {
+            background: #1E3A8A;
+            color: #fff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1em;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        /* Conteúdo do filme */
+        .movie-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .movie-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #1E3A8A;
+        }
+
+        .movie-details {
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        .movie-details span {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 500px) {
+            body {
+                padding: 20px;
+            }
+            .movie-item {
+                padding: 12px 15px;
+            }
+            .movie-number {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9em;
+                margin-right: 10px;
+            }
+            .movie-title {
+                font-size: 1.1em;
+            }
+            .movie-details {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Top 20 Filmes Mais Bem Avaliados</h1>
+
+    <div class="sort-container">
+        <label for="sort">Ordenar por: </label>
+        <select id="sort" onchange="sortList()">
+            <option value="title">Título</option>
+            <option value="media">Maior Média</option>
+            <option value="total">Mais Avaliados</option>
+        </select>
+    </div>
+
+    <ul class="movie-list" id="movieList">
+        {% for movie in movies %}
+        <li class="movie-item" data-title="{{ movie.title }}" data-media="{{ movie.media }}" data-total="{{ movie.total_avaliacoes }}">
+            <div class="movie-number">{{ loop.index }}</div>
+            <div class="movie-info">
+                <div class="movie-title">🎬 {{ movie.title }}</div>
+                <div class="movie-details">
+                    ⭐ <span>Média:</span>{{ "%.2f"|format(movie.media) }} &nbsp;&nbsp; 📝 <span>Total:</span>{{ movie.total_avaliacoes }}
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <script>
+    function sortList() {
+        const container = document.getElementById("movieList");
+        const items = Array.from(container.getElementsByClassName("movie-item"));
+        const sortBy = document.getElementById("sort").value;
+
+        items.sort((a, b) => {
+            if(sortBy === "title") {
+                return a.dataset.title.localeCompare(b.dataset.title);
+            } else if(sortBy === "media") {
+                return parseFloat(b.dataset.media) - parseFloat(a.dataset.media);
+            } else if(sortBy === "total") {
+                return parseInt(b.dataset.total) - parseInt(a.dataset.total);
+            }
+        });
+
+        // Atualiza os números dentro das bolinhas
+        items.forEach((item, index) => {
+            item.querySelector(".movie-number").textContent = index + 1;
+            container.appendChild(item);
+        });
+    }
+
+    // Ordena automaticamente ao carregar a página
+    window.addEventListener('DOMContentLoaded', () => {
+        sortList();
+    });
+</script>
+
+    </script>
+</body>
+</html>
